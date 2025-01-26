@@ -422,10 +422,10 @@
       "options": {
         "basemap": {
           "config": {
-            "server": "streets"
+            "url": "https://webrd0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"
           },
           "name": "Layer 0",
-          "type": "esri-xyz"
+          "type": "xyz"
         },
         "controls": {
           "mouseWheelZoom": true,
@@ -436,6 +436,49 @@
           "showZoom": true
         },
         "layers": [
+	  {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "opacity": 0,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 5,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Temp Fix Grafana Issue #89777",
+            "tooltip": false,
+            "type": "markers"
+          }, 
           {
             "config": {
               "arrow": 0,
@@ -516,7 +559,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "WITH journey AS (SELECT start_date, end_date FROM drives WHERE id = $journey)\nSELECT\n  $__time(date), latitude, longitude\nFROM positions, journey\nWHERE\n    car_id = $car_id AND (date BETWEEN journey.start_date AND journey.end_date)\nORDER BY date ASC",
+          "rawSql": "WITH journey AS (SELECT start_date, end_date FROM drives WHERE id = $journey)\nSELECT\n  $__time(date), (wgs84_to_gcj02(latitude, longitude)).gcjLat AS latitude,\n  (wgs84_to_gcj02(latitude, longitude)).gcjLon AS longitude\nFROM positions, journey\nWHERE\n    car_id = $car_id AND (date BETWEEN journey.start_date AND journey.end_date)\nORDER BY date ASC",
           "refId": "A",
           "select": [
             [
